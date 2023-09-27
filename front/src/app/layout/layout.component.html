@@ -1,0 +1,9 @@
+<div ngClass="flex flex-col">
+    <div ngClass="sticky top-0">
+        <ng-content select="app-nav"></ng-content>
+    </div>
+    <app-container>
+        <ng-content></ng-content>
+    </app-container>
+    <ng-content select="app-footer"></ng-content>
+</div>

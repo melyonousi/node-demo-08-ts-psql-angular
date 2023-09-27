@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+html,
+body {
+	color-scheme: light dark;
+	@apply text-xl scroll-smooth overflow-x-hidden;
+}

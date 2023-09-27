@@ -1,0 +1,132 @@
+<section ngClass="min-h-screen">
+    <div ngClass="mx-auto self-center w-full flex justify-center items-center text-center text-teal-500">
+        <span [ngClass]="{'text-red-500': message.type == 'error'}" [innerText]="message.text"></span>
+    </div>
+    <div class="overflow-x-auto">
+        <table ngClass="table-auto mx-auto border-separate border-spacing-2 border border-slate-500">
+            <caption ngClass="caption-top font-bold pb-4">
+                <div ngClass="flex justify-between items-center">
+                    <span ngClass="text-2xl" [innerText]="'CRUD Notes'"></span>
+                    <button (click)="openDialog(dialog.CREATE)"
+                        ngClass="text-xl font-normal px-2 py-1 bg-teal-500 dark:text-white text-white hover:bg-teal-600">Add
+                        New Note</button>
+                </div>
+            </caption>
+            <thead>
+                <tr>
+                    <th ngClass="whitespace-nowrap text-start border border-slate-600 px-1.5 py-1">Number</th>
+                    <th ngClass="whitespace-nowrap text-start border border-slate-600 px-1.5 py-1">Name</th>
+                    <th ngClass="whitespace-nowrap text-start border border-slate-600 px-1.5 py-1">Description</th>
+                    <th ngClass="whitespace-nowrap text-start border border-slate-600 px-1.5 py-1">Created At</th>
+                    <th ngClass="whitespace-nowrap text-start border border-slate-600 px-1.5 py-1">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let note of notes; let e = even; let o = odd; let i = index"
+                    [ngClass]="[e ? 'even' : 'odd']">
+                    <td ngClass="whitespace-nowrap border border-slate-700 px-1.5 py-1">
+                        <span [innerText]="i + 1"></span>
+                    </td>
+                    <td ngClass="whitespace-nowrap border border-slate-700 px-1.5 py-1 text-ellipsis overflow-x-hidden max-w-[180px]"
+                        [title]="note?.name"><span [innerText]="note?.name"></span>
+                    </td>
+                    <td ngClass="whitespace-nowrap border border-slate-700 px-1.5 py-1 text-ellipsis overflow-x-hidden max-w-[160px]"
+                        [title]="note?.description"><span [innerText]="note?.description"></span>
+                    </td>
+                    <td ngClass="whitespace-nowrap border border-slate-700 px-1.5 py-1 text-ellipsis overflow-x-hidden max-w-[160px]"
+                        [title]="note?.createdAt | date:'EEEE, d-MMMM-y'"><span [innerText]="note?.createdAt | date:'EEEE, d-MMMM-y'"></span>
+                    </td>
+
+                    <td ngClass="flex gap-1 border border-slate-700 px-1.5 py-1">
+                        <button (click)="getNote(note, dialog.UPDATE)" [title]="note?.name"
+                            ngClass="bg-violet-500 px-2 py-1">Show</button>
+                        <button (click)="getNote(note, dialog.DELETE)" [title]="note?.name"
+                            ngClass="bg-red-500 px-2 py-1">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot></tfoot>
+        </table>
+    </div>
+    <dialog [id]="dialog.CREATE"
+        ngClass="max-w-md w-full mx-auto bg-slate-800 px-4 py-4 backdrop:bg-slate-950 backdrop:bg-opacity-50 backdrop:backdrop-blur-sm">
+        <form ngClass="flex flex-col gap-3">
+            <div>
+                <label for="name" aria-label="name"></label>
+                <input [(ngModel)]="note.name" class="w-full px-2 py-1 outline-none bg-slate-700" type="text"
+                    name="name" placeholder="enter note name">
+                <span ngClass="text-red-500 text-sm" [innerText]="note.nameError"></span>
+            </div>
+            <div>
+                <label for="description" aria-label="description"></label>
+                <textarea [(ngModel)]="note.description" class="w-full px-2 py-1 outline-none bg-slate-700"
+                    name="description" placeholder="enter note description"></textarea>
+                <span ngClass="text-red-500 text-sm" [innerText]="note.descriptionError"></span>
+            </div>
+            <div ngClass="flex justify-end gap-2">
+                <button class="uppercase text-sm text-slate-400 hover:text-slate-200"
+                    (click)="closeDialog(dialog.CREATE)" [innerText]="'Cancel'"></button>
+                <button
+                    class="uppercase text-sm text-slate-400 hover:text-slate-200 bg-slate-900 px-2 py-1 disabled:cursor-not-allowed"
+                    (click)="createNote()">
+                    <span [innerText]="'Create'"></span>
+                    <span *ngIf="pending" ngClass="animate-pulse" [innerText]="'...'"></span>
+                </button>
+            </div>
+        </form>
+    </dialog>
+    <dialog [id]="dialog.UPDATE"
+        ngClass="max-w-md w-full mx-auto bg-slate-800 px-4 py-4 backdrop:bg-slate-950 backdrop:bg-opacity-50 backdrop:backdrop-blur-sm">
+        <form ngClass="flex flex-col gap-3">
+            <div>
+                <label for="name" aria-label="name"></label>
+                <input [(ngModel)]="note.name" class="w-full px-2 py-1 outline-none bg-slate-700" type="text"
+                    name="name" placeholder="enter note name">
+                <span ngClass="text-red-500 text-sm" [innerText]="note.nameError"></span>
+            </div>
+            <div>
+                <label for="description" aria-label="description"></label>
+                <textarea [(ngModel)]="note.description"
+                    class="w-full min-h-[200px] px-2 py-1 outline-none bg-slate-700" name="description"
+                    placeholder="enter note description"></textarea>
+                <span ngClass="text-red-500 text-sm" [innerText]="note.descriptionError"></span>
+            </div>
+            <div>
+                <p [innerText]="note.createdAt | date:'EEEE, d-MMMM-y'"
+                    class="w-full px-2 py-1 outline-none bg-slate-700" name="createAt" readonly></p>
+            </div>
+            <div ngClass="flex justify-end gap-2">
+                <button class="uppercase text-sm text-slate-400 hover:text-slate-200"
+                    (click)="closeDialog(dialog.UPDATE)" [innerText]="'Cancel'"></button>
+                <button
+                    class="uppercase text-sm text-slate-400 hover:text-slate-200 bg-slate-900 px-2 py-1 disabled:cursor-not-allowed"
+                    (click)="updateNote(note)">
+                    <span [innerText]="'update'"></span>
+                    <span *ngIf="pending" ngClass="animate-pulse" [innerText]="'...'"></span>
+                </button>
+            </div>
+        </form>
+    </dialog>
+    <dialog [id]="dialog.DELETE"
+        ngClass="max-w-md w-full mx-auto bg-slate-800 px-4 py-4 backdrop:bg-slate-950 backdrop:bg-opacity-50 backdrop:backdrop-blur-sm">
+        <form ngClass="flex flex-col gap-3">
+            <div>
+                <p ngClass="text-center">
+                    <span [innerText]="'are you sure to delete'"></span>
+                    <span ngClass="text-red-500 px-1" [innerText]="note.name"></span>
+                    <span [innerText]="'note'"></span>
+                </p>
+            </div>
+            <div ngClass="flex justify-end gap-2">
+                <button
+                    class="uppercase text-sm text-slate-100 bg-red-500 hover:bg-red-600 px-2 py-1 disabled:cursor-not-allowed"
+                    (click)="deleteNote(note)">
+                    <span [innerText]="'Delete'"></span>
+                    <span *ngIf="pending" ngClass="animate-pulse" [innerText]="'...'"></span>
+                </button>
+                <button class="uppercase text-sm text-slate-400 hover:text-slate-200"
+                    (click)="closeDialog(dialog.DELETE)" [innerText]="'Cancel'"></button>
+            </div>
+        </form>
+    </dialog>
+</section>
